@@ -20,7 +20,7 @@ namespace APICatalogo.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Produto>> GetProdutos()
         {
-            var produtos = _context.Produtos.ToList();
+            var produtos = _context.Produtos.Take(10).ToList();
             if (produtos is null)
             {
                 return NotFound();
@@ -64,7 +64,7 @@ namespace APICatalogo.Controllers
             _context.Entry(produto).State = EntityState.Modified; 
             _context.SaveChanges();
 
-            return Ok();
+            return Ok(produto);
         }
 
         [HttpDelete("{id:int}")]
