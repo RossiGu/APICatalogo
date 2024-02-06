@@ -11,29 +11,23 @@ namespace APICatalogo.Controllers
     [ApiController]
     public class CategoriasController : ControllerBase
     {
-        private readonly ICategoriaRepository _repository;
+        private readonly IRepository<Categoria> _repository;
 
-        public CategoriasController(ICategoriaRepository repository)
+        public CategoriasController(IRepository<Categoria> repository)
         {
             _repository = repository;
         }
 
-        //[HttpGet("produtos")]
-        //public ActionResult<IEnumerable<Categoria>> GetCategoriasProdutos()
-        //{
-        //    return _context.Categorias.Include(p => p.Produtos).ToList();
-        //}
-
         [HttpGet]
         public ActionResult<IEnumerable<Categoria>> GetCategoria()
         {
-            return Ok(_repository.GetCategorias());
+            return Ok(_repository.GetAll());
         }
 
         [HttpGet("{id:int}", Name = "ObterCategoria")]
         public ActionResult<Categoria> GetCategoriasById(int id)
         {
-            var categoria = _repository.GetCategoria(id);
+            var categoria = _repository.Get(c => c.CategoriaId == id);
             if (categoria is null)
             {
                 return NotFound("Categoria não encontrado");
@@ -68,13 +62,13 @@ namespace APICatalogo.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {
-            var categoria = _repository.GetCategoria(id);
+            var categoria = _repository.Get(c => c.CategoriaId == id);
             if (categoria is null)
             {
                 return NotFound("Categoria não encontrado");
             }
 
-            var categoriaDelete = _repository.Delete(id);
+            var categoriaDelete = _repository.Delete(categoria  );
             return Ok(categoriaDelete);
         }
     }
