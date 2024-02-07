@@ -11,23 +11,23 @@ namespace APICatalogo.Controllers
     [ApiController]
     public class CategoriasController : ControllerBase
     {
-        private readonly IRepository<Categoria> _repository;
+        private readonly IUnityofWork _uof;
 
-        public CategoriasController(IRepository<Categoria> repository)
+        public CategoriasController(IUnityofWork uof)
         {
-            _repository = repository;
+            _uof = uof;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<Categoria>> GetCategoria()
         {
-            return Ok(_repository.GetAll());
+            return Ok(_uof.CategoriaRepository.GetAll());
         }
 
         [HttpGet("{id:int}", Name = "ObterCategoria")]
         public ActionResult<Categoria> GetCategoriasById(int id)
         {
-            var categoria = _repository.Get(c => c.CategoriaId == id);
+            var categoria = _uof.CategoriaRepository.Get(c => c.CategoriaId == id);
             if (categoria is null)
             {
                 return NotFound("Categoria não encontrado");
@@ -43,7 +43,8 @@ namespace APICatalogo.Controllers
                 return BadRequest("Dados inválidos");
             }
 
-            var categoriaCreate = _repository.Create(categoria);
+            var categoriaCreate = _uof.CategoriaRepository.Create(categoria);
+            _uof.Commit();
             return new CreatedAtRouteResult("ObterCategoria", new { id = categoriaCreate.CategoriaId }, categoriaCreate);
         }
 
@@ -55,20 +56,22 @@ namespace APICatalogo.Controllers
                 return BadRequest("Dados inválidos");
             }
 
-            _repository.Update(categoria);
+            _uof.CategoriaRepository.Update(categoria);
+            _uof.Commit();
             return Ok(categoria);
         }
 
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {
-            var categoria = _repository.Get(c => c.CategoriaId == id);
+            var categoria = _uof.CategoriaRepository.Get(c => c.CategoriaId == id);
             if (categoria is null)
             {
                 return NotFound("Categoria não encontrado");
             }
 
-            var categoriaDelete = _repository.Delete(categoria  );
+            var categoriaDelete = _uof.CategoriaRepository.Delete(categoria);
+            _uof.Commit();
             return Ok(categoriaDelete);
         }
     }

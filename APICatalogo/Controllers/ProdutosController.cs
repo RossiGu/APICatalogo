@@ -11,18 +11,18 @@ namespace APICatalogo.Controllers
     [ApiController]
     public class ProdutosController : ControllerBase
     {
-        private readonly IProdutoRepository _produtoRepository;
-        private readonly IRepository<Produto> _repository;
-        public ProdutosController(IRepository<Produto> repository, IProdutoRepository produtoRepository)
+
+        private readonly IUnityofWork _uof;
+
+        public ProdutosController(IUnityofWork uof)
         {
-            _repository = repository;
-            _produtoRepository = produtoRepository;
+            _uof = uof;
         }
 
         [HttpGet("produtos/{id}")]
         public ActionResult<IEnumerable<Produto>> GetProdutosCategoria(int id)
         {
-            var produtos = _produtoRepository.GetProdutosPorCategoria(id);
+            var produtos = _uof.ProdutoRepository.GetProdutosPorCategoria(id);
             if (produtos is null)
             {
                 return NotFound();
@@ -33,7 +33,7 @@ namespace APICatalogo.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Produto>> GetProdutos()
         {
-            var produtos = _repository.GetAll();
+            var produtos = _uof.ProdutoRepository.GetAll();
             if (produtos is null)
             {
                 return NotFound();
@@ -44,7 +44,7 @@ namespace APICatalogo.Controllers
         [HttpGet("{id:int}", Name ="ObterProduto")]
         public ActionResult<Produto> GetProdutosById(int id) 
         {
-            var produto = _repository.Get(c => c.CategoriaId == id);
+            var produto = _uof.ProdutoRepository.Get(c => c.CategoriaId == id);
             if (produto is null)
             {
                 return NotFound("Produto não encontrado");
@@ -60,7 +60,8 @@ namespace APICatalogo.Controllers
                 return BadRequest();
             }
 
-            var novoProduto = _repository.Create(produto);
+            var novoProduto = _uof.ProdutoRepository.Create(produto);
+            _uof.Commit();
 
             return new CreatedAtRouteResult("ObterProduto", new { id = novoProduto.ProdutoId }, novoProduto);
         }
@@ -73,7 +74,8 @@ namespace APICatalogo.Controllers
                 return BadRequest();
             }
 
-            var produtoAtualizado = _repository.Update(produto);
+            var produtoAtualizado = _uof.ProdutoRepository.Update(produto);
+            _uof.Commit();
 
             return Ok(produtoAtualizado);
         }
@@ -81,12 +83,15 @@ namespace APICatalogo.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id)
         {
-            var produtoDelete = _repository.Get(c => c.CategoriaId == id);
+            var produtoDelete = _uof.ProdutoRepository.Get(c => c.CategoriaId == id);
             if (produtoDelete is null)
             {
                 return NotFound("Produto não encontrado");
             }
-            return Ok(_repository.Delete(produtoDelete));
+            var produtoDel = _uof.ProdutoRepository.Delete(produtoDelete);
+            _uof.Commit();
+
+            return Ok(produtoDel);
         }
     }
 }
