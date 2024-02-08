@@ -1,12 +1,15 @@
 ﻿using APICatalogo.Context;
 using APICatalogo.DTOs;
 using APICatalogo.Models;
+using APICatalogo.Pagination;
 using APICatalogo.Repositories;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Net.WebSockets;
 
 namespace APICatalogo.Controllers
 {
@@ -28,10 +31,42 @@ namespace APICatalogo.Controllers
         public ActionResult<IEnumerable<ProdutoDTO>> GetProdutosCategoria(int id)
         {
             var produtos = _uof.ProdutoRepository.GetProdutosPorCategoria(id);
-            if (produtos is null) return NotFound();
+            if (produtos is null) { return NotFound(); }
 
             var produtosDto = _mapper.Map<IEnumerable<ProdutoDTO>>(produtos);
 
+            return Ok(produtosDto);
+        }
+
+        [HttpGet("pagination")]
+        public ActionResult<IEnumerable<ProdutoDTO>> Get([FromQuery] ProdutosParameters produtosParameters)
+        {
+            var produtos = _uof.ProdutoRepository.GetProdutos(produtosParameters);
+            return ObterProdutos(produtos);
+        }
+
+        [HttpGet("filter/preco/pagination")]
+        public ActionResult<IEnumerable<ProdutoDTO>> GetProdutosFilterPreco([FromQuery] ProdutosPriceFilter produtosPriceFilter)
+        {
+            var produtos = _uof.ProdutoRepository.GetProdutosFiltroPreco(produtosPriceFilter);
+            return ObterProdutos(produtos);
+        }
+
+        private ActionResult<IEnumerable<ProdutoDTO>> ObterProdutos(PagedList<Produto> produtos)
+        {
+            var metadata = new
+            {
+                produtos.TotalCount,
+                produtos.PageSize,
+                produtos.CurrentPage,
+                produtos.TotalPages,
+                produtos.HasNext,
+                produtos.HasPrevious
+            };
+
+            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(metadata));
+
+            var produtosDto = _mapper.Map<IEnumerable<ProdutoDTO>>(produtos);
             return Ok(produtosDto);
         }
 
@@ -39,7 +74,7 @@ namespace APICatalogo.Controllers
         public ActionResult<IEnumerable<ProdutoDTO>> GetProdutos()
         {
             var produtos = _uof.ProdutoRepository.GetAll();
-            if (produtos is null) return NotFound();
+            if (produtos is null) { return NotFound(); }
 
             var produtosDto = _mapper.Map<IEnumerable<ProdutoDTO>>(produtos);
 
@@ -49,7 +84,7 @@ namespace APICatalogo.Controllers
         [HttpGet("{id:int}", Name ="ObterProduto")]
         public ActionResult<ProdutoDTO> GetProdutosById(int id) 
         {
-            var produto = _uof.ProdutoRepository.Get(c => c.CategoriaId == id);
+            var produto = _uof.ProdutoRepository.Get(c => c.ProdutoId == id);
             if (produto is null) { return NotFound("Produto não encontrado"); }
 
             var produtoDto = _mapper.Map<ProdutoDTO>(produto);
@@ -112,7 +147,7 @@ namespace APICatalogo.Controllers
         [HttpDelete("{id:int}")]
         public ActionResult<ProdutoDTO> Delete(int id)
         {
-            var produtoDelete = _uof.ProdutoRepository.Get(c => c.CategoriaId == id);
+            var produtoDelete = _uof.ProdutoRepository.Get(c => c.ProdutoId == id);
             if (produtoDelete is null) return NotFound("Produto não encontrado");
 
             var produtoDel = _uof.ProdutoRepository.Delete(produtoDelete);
