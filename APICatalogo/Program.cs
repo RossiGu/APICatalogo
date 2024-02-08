@@ -25,6 +25,8 @@ builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUnityofWork, UnityOfWork>();
 builder.Services.AddAutoMapper(typeof(ProdutoDTOMappingProfile));
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication("Bearer").AddJwtBearer();
 
 var app = builder.Build();
 

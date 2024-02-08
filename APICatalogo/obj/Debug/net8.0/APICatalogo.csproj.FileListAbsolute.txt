@@ -119,3 +119,11 @@ C:\Users\roberto\Documents\ws-dotnet\APICatalogo\APICatalogo\bin\Debug\net8.0\Ne
 C:\Users\roberto\Documents\ws-dotnet\APICatalogo\APICatalogo\bin\Debug\net8.0\JetBrains.Annotations.dll
 C:\Users\roberto\Documents\ws-dotnet\APICatalogo\APICatalogo\bin\Debug\net8.0\X.PagedList.dll
 C:\Users\roberto\Documents\ws-dotnet\APICatalogo\APICatalogo\bin\Debug\net8.0\X.PagedList.Mvc.Core.dll
+C:\Users\roberto\Documents\ws-dotnet\APICatalogo\APICatalogo\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\roberto\Documents\ws-dotnet\APICatalogo\APICatalogo\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\roberto\Documents\ws-dotnet\APICatalogo\APICatalogo\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\roberto\Documents\ws-dotnet\APICatalogo\APICatalogo\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\roberto\Documents\ws-dotnet\APICatalogo\APICatalogo\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\roberto\Documents\ws-dotnet\APICatalogo\APICatalogo\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\roberto\Documents\ws-dotnet\APICatalogo\APICatalogo\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\roberto\Documents\ws-dotnet\APICatalogo\APICatalogo\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
