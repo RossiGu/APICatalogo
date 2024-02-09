@@ -4,6 +4,7 @@ using APICatalogo.DTOs.Mappings;
 using APICatalogo.Models;
 using APICatalogo.Pagination;
 using APICatalogo.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,11 +24,14 @@ namespace APICatalogo.Controllers
             _uof = uof;
         }
 
+        [Authorize]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoriaDTO>>> GetCategoria()
+        public async Task<ActionResult<IEnumerable<CategoriaDTO>>> Get()
         {
             var categorias = await _uof.CategoriaRepository.GetAllAsync();
-            if (categorias is null) return NotFound("Não existem categorias");
+
+            if (categorias is null)
+                return NotFound("Não existem categorias...");
 
             var categoriasDto = categorias.ToCategoriaDTOList();
 
