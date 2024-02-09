@@ -24,7 +24,7 @@ namespace APICatalogo.Controllers
             _uof = uof;
         }
 
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CategoriaDTO>>> Get()
         {
@@ -124,6 +124,7 @@ namespace APICatalogo.Controllers
             return Ok(categoriaAtualizadaDto);
         }
 
+        [Authorize(Policy = "AdminOnly")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<CategoriaDTO>> Delete(int id)
         {
